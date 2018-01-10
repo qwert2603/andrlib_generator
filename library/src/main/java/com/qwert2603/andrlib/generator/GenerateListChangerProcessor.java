@@ -51,7 +51,7 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
         try {
             String dir = processingEnv.getOptions().get("kapt.kotlin.generated").replace("kaptKotlin", "kapt");
 
-            File lastFile = new File(dir, "last.txt");
+            File lastFile = new File(dir, "last_list.mls");
             try {
                 long lastMillis = Long.parseLong(new BufferedReader(new FileReader(lastFile)).readLine());
                 if (System.currentTimeMillis() - lastMillis < 15000) return true;
@@ -61,7 +61,7 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
             lastFileWriter.write(String.valueOf(System.currentTimeMillis()));
             lastFileWriter.flush();
 
-            String fileName = "ListModelChangerImpl.kt" + System.currentTimeMillis() + roundEnv.errorRaised() + roundEnv.processingOver();
+            String fileName = "ListModelChangerImpl.kt";
             Writer writer = new FileWriter(new File(dir, fileName));
             writer.write(createFileText(cases.toString()));
             writer.flush();

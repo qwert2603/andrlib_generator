@@ -1,6 +1,8 @@
 package com.qwert2603.andrlib.generator;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -42,17 +44,23 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-//        if (roundEnv.processingOver()) return true;
-        if (roundEnv.errorRaised() || roundEnv.processingOver()) {
-            return false;
-        }
-
         StringBuilder cases = new StringBuilder();
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateLRChanger.class)) {
             cases.append(createCaseText(((TypeElement) element).getQualifiedName().toString()));
         }
         try {
             String dir = processingEnv.getOptions().get("kapt.kotlin.generated").replace("kaptKotlin", "kapt");
+
+            File lastFile = new File(dir, "last_lr.mls");
+            try {
+                long lastMillis = Long.parseLong(new BufferedReader(new FileReader(lastFile)).readLine());
+                if (System.currentTimeMillis() - lastMillis < 15000) return true;
+            } catch (Exception ignored) {
+            }
+            FileWriter lastFileWriter = new FileWriter(lastFile);
+            lastFileWriter.write(String.valueOf(System.currentTimeMillis()));
+            lastFileWriter.flush();
+
             String fileName = "LRModelChangerImpl.kt";
             Writer writer = new FileWriter(new File(dir, fileName));
             writer.write(createFileText(cases.toString()));
