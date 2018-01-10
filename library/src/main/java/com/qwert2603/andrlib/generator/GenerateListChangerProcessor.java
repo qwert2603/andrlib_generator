@@ -50,7 +50,7 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
         }
         try {
             String dir = processingEnv.getOptions().get("kapt.kotlin.generated").replace("kaptKotlin", "kapt");
-            String fileName = "ListModelChangerImpl.kt" + System.currentTimeMillis();
+            String fileName = "ListModelChangerImpl.kt" + System.currentTimeMillis() + roundEnv.errorRaised() + roundEnv.processingOver();
             Writer writer = new FileWriter(new File(dir, fileName));
             writer.write(createFileText(cases.toString()));
             writer.flush();
