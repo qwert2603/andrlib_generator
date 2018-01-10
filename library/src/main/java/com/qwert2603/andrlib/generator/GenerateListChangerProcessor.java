@@ -42,7 +42,7 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (!roundEnv.processingOver()) return true;
+//        if (roundEnv.processingOver()) return true;
 
         StringBuilder cases = new StringBuilder();
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateListChanger.class)) {
@@ -50,7 +50,7 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
         }
         try {
             String dir = processingEnv.getOptions().get("kapt.kotlin.generated").replace("kaptKotlin", "kapt");
-            String fileName = "ListModelChangerImpl.kt";
+            String fileName = "ListModelChangerImpl.kt" + System.currentTimeMillis();
             Writer writer = new FileWriter(new File(dir, fileName));
             writer.write(createFileText(cases.toString()));
             writer.flush();
