@@ -42,7 +42,10 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) return true;
+//        if (roundEnv.processingOver()) return true;
+        if (roundEnv.errorRaised() || roundEnv.processingOver()) {
+            return false;
+        }
 
         StringBuilder cases = new StringBuilder();
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateLRChanger.class)) {
