@@ -33,7 +33,7 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
                 "    @Suppress(\"UNCHECKED_CAST\")\n" +
                 "    override fun <VS : ListViewState<*>> changeListModel(vs: VS, listModel: ListModel): VS = when (vs) {\n" +
                 cases +
-                "        else -> null!!\n" +
+                "        else -> throw java.lang.IllegalArgumentException(\"ListModelChangerImpl changeListModel $vs $listModel\")\n" +
                 "    } as VS\n" +
                 "}";
     }

@@ -33,7 +33,7 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
                 "    @Suppress(\"UNCHECKED_CAST\")\n" +
                 "    override fun <VS : LRViewState> changeLRModel(vs: VS, lrModel: LRModel): VS = when (vs) {\n" +
                 cases +
-                "        else -> null!!\n" +
+                "        else -> throw java.lang.IllegalArgumentException(\"LRModelChangerImpl changeLRModel $vs $lrModel\")n" +
                 "    } as VS\n" +
                 "}";
     }
