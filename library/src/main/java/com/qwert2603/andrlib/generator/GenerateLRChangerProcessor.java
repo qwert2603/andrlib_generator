@@ -38,15 +38,28 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
                 "}";
     }
 
-    private static String createCaseText(String className) {
-        return "        is " + className + " -> vs.copy(lrModel = lrModel)\n";
+    private static String createCaseText(TypeElement typeElement) {
+        String typeParameters;
+        if (typeElement.getTypeParameters().isEmpty()) {
+            typeParameters = "";
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append('<');
+            for (int i = 0; i < typeElement.getTypeParameters().size(); i++) {
+                stringBuilder.append("*, ");
+            }
+            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+            stringBuilder.append('>');
+            typeParameters = stringBuilder.toString();
+        }
+        return "        is " + typeElement.getQualifiedName().toString() + typeParameters + " -> vs.copy(lrModel = lrModel)\n";
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         StringBuilder cases = new StringBuilder();
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateLRChanger.class)) {
-            cases.append(createCaseText(((TypeElement) element).getQualifiedName().toString()));
+            cases.append(createCaseText(((TypeElement) element)));
         }
         try {
             String dir = processingEnv.getOptions().get("kapt.kotlin.generated").replace("kaptKotlin", "kapt");
