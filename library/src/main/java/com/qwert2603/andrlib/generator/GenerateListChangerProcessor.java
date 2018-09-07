@@ -1,8 +1,6 @@
 package com.qwert2603.andrlib.generator;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -29,9 +27,9 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
                 "import com.qwert2603.andrlib.base.mvi.load_refresh.list.ListModelChanger\n" +
                 "import com.qwert2603.andrlib.base.mvi.load_refresh.list.ListViewState\n" +
                 "\n" +
-                "class ListModelChangerImpl : ListModelChanger {\n" +
+                "open class ListModelChangerImpl : ListModelChanger {\n" +
                 "    @Suppress(\"UNCHECKED_CAST\")\n" +
-                "    override fun <VS : ListViewState<*>> changeListModel(vs: VS, listModel: ListModel): VS = when (vs) {\n" +
+                "    open override fun <VS : ListViewState<*>> changeListModel(vs: VS, listModel: ListModel): VS = when (vs) {\n" +
                 cases +
                 "        else -> throw java.lang.IllegalArgumentException(\"ListModelChangerImpl changeListModel $vs $listModel\")\n" +
                 "    } as VS\n" +
@@ -57,23 +55,36 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        try {
+            final FileWriter fileWriter = new FileWriter(new File(Utils.getDirName(processingEnv), "qqq.txt"), true);
+            fileWriter.write("errorRaised=" + roundEnv.errorRaised() + "; processingOver=" + roundEnv.processingOver() + "\n");
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException ignored) {
+        }
+
+        try {
+            final FileWriter fileWriter = new FileWriter(new File(Utils.getDirName(processingEnv), "www.txt"), true);
+            fileWriter.write("processingEnv.getOptions()=" + processingEnv.getOptions().toString() + "\n");
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException ignored) {
+        }
+
+//        final String filenameLastMillis = "last_list.mls";
+//        if (System.currentTimeMillis() - Utils.getMillisFromFile(processingEnv, filenameLastMillis) < 15000) {
+//            return true;
+//        }
+//        Utils.saveMillisToFile(processingEnv, filenameLastMillis, System.currentTimeMillis());
+
+        if (roundEnv.processingOver()) return true;
+
         StringBuilder cases = new StringBuilder();
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateListChanger.class)) {
             cases.append(createCaseText(((TypeElement) element)));
         }
         try {
-            String dir = processingEnv.getOptions().get("kapt.kotlin.generated").replace("kaptKotlin", "kapt");
-
-            File lastFile = new File(dir, "last_list.mls");
-            try {
-                long lastMillis = Long.parseLong(new BufferedReader(new FileReader(lastFile)).readLine());
-                if (System.currentTimeMillis() - lastMillis < 15000) return true;
-            } catch (Exception ignored) {
-            }
-            FileWriter lastFileWriter = new FileWriter(lastFile);
-            lastFileWriter.write(String.valueOf(System.currentTimeMillis()));
-            lastFileWriter.flush();
-
+            String dir = Utils.getDirName(processingEnv);
             String fileName = "ListModelChangerImpl.kt";
             Writer writer = new FileWriter(new File(dir, fileName));
             writer.write(createFileText(cases.toString()));

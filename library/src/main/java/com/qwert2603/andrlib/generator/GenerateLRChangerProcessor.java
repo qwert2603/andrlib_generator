@@ -1,8 +1,6 @@
 package com.qwert2603.andrlib.generator;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -29,9 +27,9 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
                 "import com.qwert2603.andrlib.base.mvi.load_refresh.LRModelChanger\n" +
                 "import com.qwert2603.andrlib.base.mvi.load_refresh.LRViewState\n" +
                 "\n" +
-                "class LRModelChangerImpl : LRModelChanger {\n" +
+                "open class LRModelChangerImpl : LRModelChanger {\n" +
                 "    @Suppress(\"UNCHECKED_CAST\")\n" +
-                "    override fun <VS : LRViewState> changeLRModel(vs: VS, lrModel: LRModel): VS = when (vs) {\n" +
+                "    open override fun <VS : LRViewState> changeLRModel(vs: VS, lrModel: LRModel): VS = when (vs) {\n" +
                 cases +
                 "        else -> throw java.lang.IllegalArgumentException(\"LRModelChangerImpl changeLRModel $vs $lrModel\")\n" +
                 "    } as VS\n" +
@@ -57,23 +55,20 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+//        final String filenameLastMillis = "last_lr.mls";
+//        if (System.currentTimeMillis() - Utils.getMillisFromFile(processingEnv, filenameLastMillis) < 15000) {
+//            return true;
+//        }
+//        Utils.saveMillisToFile(processingEnv, filenameLastMillis, System.currentTimeMillis());
+
+        if (roundEnv.processingOver()) return true;
+
         StringBuilder cases = new StringBuilder();
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateLRChanger.class)) {
             cases.append(createCaseText(((TypeElement) element)));
         }
         try {
-            String dir = processingEnv.getOptions().get("kapt.kotlin.generated").replace("kaptKotlin", "kapt");
-
-            File lastFile = new File(dir, "last_lr.mls");
-            try {
-                long lastMillis = Long.parseLong(new BufferedReader(new FileReader(lastFile)).readLine());
-                if (System.currentTimeMillis() - lastMillis < 15000) return true;
-            } catch (Exception ignored) {
-            }
-            FileWriter lastFileWriter = new FileWriter(lastFile);
-            lastFileWriter.write(String.valueOf(System.currentTimeMillis()));
-            lastFileWriter.flush();
-
+            String dir = Utils.getDirName(processingEnv);
             String fileName = "LRModelChangerImpl.kt";
             Writer writer = new FileWriter(new File(dir, fileName));
             writer.write(createFileText(cases.toString()));
