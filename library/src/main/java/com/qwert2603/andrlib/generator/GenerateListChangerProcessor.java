@@ -57,7 +57,9 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         try {
             final FileWriter fileWriter = new FileWriter(new File(Utils.getDirName(processingEnv), "qqq.txt"), true);
-            fileWriter.write("errorRaised=" + roundEnv.errorRaised() + "; processingOver=" + roundEnv.processingOver() + "\n");
+            fileWriter.write("errorRaised=" + roundEnv.errorRaised()
+                    + "; processingOver=" + roundEnv.processingOver()
+                    + "; roundEnv.getElementsAnnotatedWith(GenerateListChanger.class)=" + roundEnv.getElementsAnnotatedWith(GenerateListChanger.class).toString() + "\n");
             fileWriter.flush();
             fileWriter.close();
         } catch (IOException ignored) {
