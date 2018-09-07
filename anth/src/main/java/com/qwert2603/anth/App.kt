@@ -14,7 +14,7 @@ object App {
 
         listModelChangerInstance = object : ListModelChangerImpl() {
             override fun <VS : ListViewState<*>> changeListModel(vs: VS, listModel: ListModel): VS {
-                if (vs is AnthVS<*>) {
+                if (vs is AnthVS<*> && vs.i == 42) {
                     return vs
                 }
                 return super.changeListModel(vs, listModel)
