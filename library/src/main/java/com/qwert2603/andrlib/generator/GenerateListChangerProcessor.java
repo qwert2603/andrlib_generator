@@ -75,14 +75,6 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
         } catch (IOException ignored) {
         }
 
-//        final String filenameLastMillis = "last_list.mls";
-//        if (System.currentTimeMillis() - Utils.getMillisFromFile(processingEnv, filenameLastMillis) < 15000) {
-//            return true;
-//        }
-//        Utils.saveMillisToFile(processingEnv, filenameLastMillis, System.currentTimeMillis());
-
-//        if (roundEnv.processingOver()) return true;
-
         if (done) return true;
         done = true;
 

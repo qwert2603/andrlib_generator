@@ -57,14 +57,6 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-//        final String filenameLastMillis = "last_lr.mls";
-//        if (System.currentTimeMillis() - Utils.getMillisFromFile(processingEnv, filenameLastMillis) < 15000) {
-//            return true;
-//        }
-//        Utils.saveMillisToFile(processingEnv, filenameLastMillis, System.currentTimeMillis());
-
-//        if (roundEnv.processingOver()) return true;
-
         if (done) return true;
         done = true;
 
