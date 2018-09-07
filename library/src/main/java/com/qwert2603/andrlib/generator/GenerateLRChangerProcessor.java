@@ -53,6 +53,8 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
         return "        is " + typeElement.getQualifiedName().toString() + typeParameters + " -> vs.copy(lrModel = lrModel)\n";
     }
 
+    private boolean done = false;
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 //        final String filenameLastMillis = "last_lr.mls";
@@ -61,7 +63,10 @@ public class GenerateLRChangerProcessor extends AbstractProcessor {
 //        }
 //        Utils.saveMillisToFile(processingEnv, filenameLastMillis, System.currentTimeMillis());
 
-        if (roundEnv.processingOver()) return true;
+//        if (roundEnv.processingOver()) return true;
+
+        if (done) return true;
+        done = true;
 
         StringBuilder cases = new StringBuilder();
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateLRChanger.class)) {

@@ -53,6 +53,8 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
         return "        is " + typeElement.getQualifiedName().toString() + typeParameters + " -> vs.copy(listModel = listModel)\n";
     }
 
+    private boolean done = false;
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         try {
@@ -79,7 +81,10 @@ public class GenerateListChangerProcessor extends AbstractProcessor {
 //        }
 //        Utils.saveMillisToFile(processingEnv, filenameLastMillis, System.currentTimeMillis());
 
-        if (roundEnv.processingOver()) return true;
+//        if (roundEnv.processingOver()) return true;
+
+        if (done) return true;
+        done = true;
 
         StringBuilder cases = new StringBuilder();
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateListChanger.class)) {
